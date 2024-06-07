@@ -1,1 +1,5 @@
+# Dependencies (installed via npm during runtime)
 node_modules
+
+# Ignore tools used before commit
+build/
