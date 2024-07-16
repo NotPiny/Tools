@@ -33,8 +33,7 @@ if [ $BUILD == "bin" ]; then
 else 
     echo Using script build
     cd ~/Documents/Code/Remote/Vencord
-    echo You are about to be put into a new shell as root
-    echo Simply type "./install.sh" to install Vencord
+    echo Please run ./install.sh
     sudo su
 fi
 

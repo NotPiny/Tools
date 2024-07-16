@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Activate sudo if not already
+echo "Trying to activate sudo..."
+if [ "$EUID" -ne 0 ]; then
+    sudo echo "Success!"
+fi
+
 # Check if node is installed
 if ! [ -x "$(command -v node)" ]; then
     # Time to install node (using nvm)
@@ -16,11 +22,18 @@ if ! [ -x "$(command -v node)" ]; then
     nvm install node
 fi
 
-# Alright clone the repo (this file is most likely run from "curl -L https://example.com | bash")
-git clone https://github.com/NotPiny/Tools ~/PTools
+if ! [ -x "$(command -v git)" ]; then
+    # Incase they dont have git ig
+    sudo apt install git
+fi
 
-cd ~/PTools/setup
+# Alright clone the repo (this file is most likely run from "curl -L https://tools.piny.dev | bash")
+git clone https://github.com/NotPiny/Tools $HOME/PTools
+
+cd $HOME/PTools/setup
 mkdir ~/tmp # Not important for this script though is used a bit in other scripts
 
 npm install
-node .
+echo "Hey the git and node parts of the setup are done however you could run the setup js script by running the following command."
+sudo ln -s "$(whereis node)" /usr/bin/node
+echo "cd ~/PTools/setup && sudo ./index"
