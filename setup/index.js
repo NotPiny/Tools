@@ -20,6 +20,10 @@ const fs = require('fs');
         }
     }
 
+    const osRelease = fs.readFileSync('/etc/os-release', 'utf8');
+    // eg. [ubuntu, debian, linuxmint] or [arch]
+    const distros = osRelease.split('\n').find(line => line.startsWith('ID_LIKE=')).split('=')[1].split(' ').push(osRelease.split('\n').find(line => line.startsWith('ID=')).split('=')[1]);
+
     // Read the ../bin folder
     const files = fs.readdirSync('../bin');
 
@@ -42,8 +46,7 @@ const fs = require('fs');
     if (answers.files.length > 0) console.log(`Installed ${answers.files.length} binar${answers.files.length == 1 ? 'y' : 'ies'}!`)
 
     // Check if the system is debian based
-    const isDebianBased = fs.existsSync('/usr/bin/apt');
-    if (isDebianBased) {
+    if (distros.includes('debian')) {
         // Show select menu for useful packages (default: all)
         console.log('Hey, it seems you are using a Debian-based system. Heres some useful packages you might want to install:')
 
@@ -68,49 +71,50 @@ const fs = require('fs');
             });
         });
 
-        // const programs = [
-        //     'Brave Browser',
-        //     'Visual Studio Code',
-        //     'Discord Canary',
-        //     'GDLauncher',
-        //     'Insomnia',
-        //     'FileZilla',
-        //     'OBS Studio',
-        //     'Notesnook',
-        //     'Proton VPN'
-        // ]
+        const programs = [
+            'Brave Browser',
+            'Visual Studio Code',
+            'Discord Canary',
+            'GDLauncher',
+            'Insomnia',
+            'FileZilla',
+            'OBS Studio',
+            'Notesnook',
+            'Proton VPN'
+        ]
     
-        // answers = await inquirer.prompt([
-        //     {
-        //         type: 'checkbox',
-        //         name: 'programs',
-        //         message: 'Which programs do you want to install?',
-        //         choices: programs,
-        //         default: programs,
-        //     },
-        // ]);
+        answers = await inquirer.prompt([
+            {
+                type: 'checkbox',
+                name: 'programs',
+                message: 'Which programs do you want to install?',
+                choices: programs,
+                default: programs,
+            },
+        ]);
 
-        // const programsToInstall = {
-        //     'Brave Browser': 'brave-browser',
-        //     'Visual Studio Code': 'code',
-        //     'Discord Canary': 'discord-canary',
-        //     'GDLauncher': 'gdlauncher',
-        //     // 'Insomnia': 'insomnia',
-        //     // 'FileZilla': 'filezilla',
-        //     // 'OBS Studio': 'obs-studio',
-        //     // 'Notesnook': 'notesnook',
-        //     // 'Proton VPN': 'protonvpn'
-        // }
+        const programsToInstall = {
+            'Brave Browser': 'brave-browser',
+            'Visual Studio Code': 'code',
+            'Discord (Canary)': 'discord-canary',
+            'Discord (Stable)': 'discord',
+            'GDLauncher': 'gdlauncher',
+            // 'Insomnia': 'insomnia',
+            // 'FileZilla': 'filezilla',
+            // 'OBS Studio': 'obs-studio',
+            // 'Notesnook': 'notesnook',
+            // 'Proton VPN': 'protonvpn'
+        }
 
-        // answers.programs.forEach(program => {
-        //     console.log(`Installing ${program}...`);
-        //     // Run the install script in ../scripts/install/program.sh
-        //     require('child_process').execSync(`../scripts/install/${programsToInstall[program]}.sh`, {
-        //         stdio: 'inherit'
-        //     });
-        // });
+        answers.programs.forEach(program => {
+            console.log(`Installing ${program}...`);
+            // Run the install script in ../scripts/install/program.sh
+            require('child_process').execSync(`../scripts/install/${programsToInstall[program]}.sh`, {
+                stdio: 'inherit'
+            });
+        });
 
-        // console.log('Finished installing programs!');
+        console.log('Finished installing programs!');
     }
 
     // Exit the process

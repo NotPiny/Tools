@@ -24,7 +24,17 @@ fi
 
 if ! [ -x "$(command -v git)" ]; then
     # Incase they dont have git ig
-    sudo apt install git
+    DISTROS="$(cat /etc/os-release | grep ID_LIKE=)"
+    ARCH_BASED="$(echo $DISTROS | grep -i arch)"
+    DEB_BASED="$(echo $DISTROS | grep -i debian)"
+
+    if ! [ "$ARCH_BASED" = "" ]; then
+        pacman -S git glibc
+    fi
+
+    if ! [ "$DEB_BASED" = "" ]; then
+        sudo apt install git
+    fi
 fi
 
 # Alright clone the repo (this file is most likely run from "curl -L https://tools.piny.dev | bash")
@@ -32,8 +42,12 @@ git clone https://github.com/NotPiny/Tools $HOME/PTools
 
 cd $HOME/PTools/setup
 mkdir ~/tmp # Not important for this script though is used a bit in other scripts
-
 npm install
+cd ~/PTools/setup
+npm install
+
+# Finished
+cd ~
 echo "Hey the git and node parts of the setup are done however you could run the setup js script by running the following command."
 sudo ln -s "$(whereis node)" /usr/bin/node
-echo "cd ~/PTools/setup && sudo ./index"
+echo "cd ~/PTools/setup && sudo su --command="node"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Config (may be overwritten by arguments)
-PLATFORM=canary
+PLATFORM=stable
 VENINSTALLER=v1.4.0 # Must be "vx.x.x"
 
 # Check for arguments
@@ -13,10 +13,14 @@ echo Please type your sudo password
 sudo echo Activated sudo session
 
 cd ~/tmp
-wget -O discord.deb https://discordapp.com/api/download/$PLATFORM?platform=linux
+if [ $0 == "./venupdate.sh" ]; then # Currently developing and i dont need to redownload discord...
+    echo Skipping downloading discord because script was ran directly
+else
+    wget -O discord.deb https://discordapp.com/api/download/$PLATFORM?platform=linux
 
-echo Installing discord package...
-sudo apt install ./discord.deb -y
+    echo Installing discord package...
+    sudo apt install ./discord.deb -y
+fi
 
 if [ $BUILD == "bin" ]; then
     if [ ! -f ~/tmp/vencord-installer ]; then
@@ -33,8 +37,8 @@ if [ $BUILD == "bin" ]; then
 else 
     echo Using script build
     cd ~/Documents/Code/Remote/Vencord
-    echo Please run ./install.sh
-    sudo su
+    echo Running install.sh
+    sudo su --command="./install.sh"
 fi
 
 cd ~/tmp
